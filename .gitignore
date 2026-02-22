@@ -1,0 +1,43 @@
+# Compiled class files
+target/
+*.class
+
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.project
+.classpath
+.settings/
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+
+# Log files
+logs/
+*.log
+
+# Screenshots
+screenshots/
+
+# Allure
+allure-results/
+allure-report/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment files
+.env
+*.env
+
+# Test output
+test-output/
+surefire-reports/
+

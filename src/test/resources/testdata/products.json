@@ -1,0 +1,33 @@
+[
+  {
+    "name": "Blue Top",
+    "price": "Rs. 500",
+    "quantity": "1",
+    "category": "Women > Tops"
+  },
+  {
+    "name": "Men Tshirt",
+    "price": "Rs. 400",
+    "quantity": "2",
+    "category": "Men > Tshirts"
+  },
+  {
+    "name": "Sleeveless Dress",
+    "price": "Rs. 1000",
+    "quantity": "1",
+    "category": "Women > Dress"
+  },
+  {
+    "name": "Stylish Dress",
+    "price": "Rs. 1500",
+    "quantity": "1",
+    "category": "Women > Dress"
+  },
+  {
+    "name": "Winter Top",
+    "price": "Rs. 600",
+    "quantity": "3",
+    "category": "Women > Tops"
+  }
+]
+
