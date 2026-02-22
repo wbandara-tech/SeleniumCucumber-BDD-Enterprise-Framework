@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeleniumCucumber BDD Enterprise Framework</title>
+    <meta name="description" content="Production-grade BDD Automation Framework built with Selenium 4, Cucumber, and TestNG by Wasantha Bandara">
+    <meta name="author" content="Wasantha Bandara">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #10b981;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-hover: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+            --accent-green: #22c55e;
+            --accent-orange: #f97316;
+            --accent-purple: #a855f7;
+            --accent-cyan: #06b6d4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 0 2rem;
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 64px;
+        }
+        .nav-logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        .nav-links { display: flex; gap: 1.5rem; list-style: none; }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--text-primary); }
+
+        /* Hero Section */
+        .hero {
+            padding: 140px 2rem 80px;
+            text-align: center;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1a3e 50%, var(--bg-dark) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(37, 99, 235, 0.15) 0%, transparent 70%);
+        }
+        .hero-content { position: relative; max-width: 900px; margin: 0 auto; }
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text-primary), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+        .badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin-bottom: 2rem; }
+        .badges img { height: 24px; }
+        .hero-buttons { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.75rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: 1px solid var(--primary);
+        }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover { background: var(--bg-card); border-color: var(--text-secondary); }
+
+        /* Sections */
+        section { padding: 80px 2rem; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+
+        /* Tech Stack Grid */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+        }
+        .tech-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .tech-card:hover { background: var(--bg-card-hover); transform: translateY(-2px); border-color: var(--primary); }
+        .tech-card .tech-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .tech-card h3 { font-size: 1rem; margin-bottom: 0.25rem; }
+        .tech-card span { font-size: 0.8rem; color: var(--text-secondary); }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.2s;
+        }
+        .feature-card:hover { border-color: var(--primary); background: var(--bg-card-hover); }
+        .feature-card .feature-icon {
+            width: 40px; height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        .feature-card h3 { font-size: 1.05rem; margin-bottom: 0.5rem; }
+        .feature-card p { color: var(--text-secondary); font-size: 0.9rem; }
+        .icon-blue { background: rgba(37, 99, 235, 0.15); }
+        .icon-green { background: rgba(34, 197, 94, 0.15); }
+        .icon-orange { background: rgba(249, 115, 22, 0.15); }
+        .icon-purple { background: rgba(168, 85, 247, 0.15); }
+        .icon-cyan { background: rgba(6, 182, 212, 0.15); }
+
+        /* Architecture */
+        .architecture-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            overflow-x: auto;
+        }
+        .architecture-box pre {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            line-height: 1.5;
+            white-space: pre;
+        }
+
+        /* Test Scenarios Table */
+        .table-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            background: rgba(37, 99, 235, 0.1);
+            padding: 1rem;
+            text-align: left;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--primary);
+            border-bottom: 1px solid var(--border);
+        }
+        td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background: var(--bg-card-hover); }
+        .tag {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin: 0.1rem;
+        }
+        .tag-smoke { background: rgba(34, 197, 94, 0.15); color: var(--accent-green); }
+        .tag-regression { background: rgba(37, 99, 235, 0.15); color: var(--primary); }
+        .tag-e2e { background: rgba(168, 85, 247, 0.15); color: var(--accent-purple); }
+        .tag-sanity { background: rgba(249, 115, 22, 0.15); color: var(--accent-orange); }
+
+        /* Quick Start */
+        .quickstart-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .step-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        .step-card .step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px; height: 32px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        .step-card h3 { margin-bottom: 0.75rem; }
+        .code-block {
+            background: #0d1117;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-green);
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        .footer-author {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .footer-links { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1rem; }
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        .footer-links a:hover { color: var(--primary); }
+        .footer-copy { margin-top: 2rem; color: var(--text-secondary); font-size: 0.8rem; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .hero p { font-size: 1rem; }
+            .nav-links { display: none; }
+            section { padding: 60px 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+    <div class="nav-container">
+        <a href="#" class="nav-logo">🚀 BDD Enterprise Framework</a>
+        <ul class="nav-links">
+            <li><a href="#tech-stack">Tech Stack</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#architecture">Architecture</a></li>
+            <li><a href="#scenarios">Scenarios</a></li>
+            <li><a href="#quickstart">Quick Start</a></li>
+            <li><a href="https://github.com/wbandara-tech/SeleniumCucumber-BDD-Enterprise-Framework" target="_blank">GitHub ↗</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>SeleniumCucumber BDD<br>Enterprise Framework</h1>
+        <p>A production-grade, enterprise-level BDD Test Automation Framework built with Selenium 4, Cucumber, and TestNG. Designed with SOLID principles and industry best practices.</p>
+        <div class="badges">
+            <img src="https://img.shields.io/badge/Java-17-orange?logo=openjdk" alt="Java 17">
+            <img src="https://img.shields.io/badge/Selenium-4.27-green?logo=selenium" alt="Selenium 4">
+            <img src="https://img.shields.io/badge/Cucumber-7.20-brightgreen?logo=cucumber" alt="Cucumber">
+            <img src="https://img.shields.io/badge/TestNG-7.10-blue" alt="TestNG">
+            <img src="https://img.shields.io/badge/Maven-Build-red?logo=apachemaven" alt="Maven">
+            <img src="https://img.shields.io/badge/Allure-Reports-blueviolet" alt="Allure">
+            <img src="https://github.com/wbandara-tech/SeleniumCucumber-BDD-Enterprise-Framework/actions/workflows/ci.yml/badge.svg" alt="CI">
+        </div>
+        <div class="hero-buttons">
+            <a href="https://github.com/wbandara-tech/SeleniumCucumber-BDD-Enterprise-Framework" class="btn btn-primary" target="_blank">⭐ View on GitHub</a>
+            <a href="#quickstart" class="btn btn-secondary">🚀 Get Started</a>
+        </div>
+    </div>
+</section>
+
+<!-- Tech Stack -->
+<section id="tech-stack">
+    <div class="container">
+        <h2 class="section-title">🛠 Tech Stack</h2>
+        <p class="section-subtitle">Built with industry-standard tools and libraries</p>
+        <div class="tech-grid">
+            <div class="tech-card"><div class="tech-icon">☕</div><h3>Java 17</h3><span>Language</span></div>
+            <div class="tech-card"><div class="tech-icon">🌐</div><h3>Selenium 4</h3><span>Automation</span></div>
+            <div class="tech-card"><div class="tech-icon">🥒</div><h3>Cucumber 7</h3><span>BDD</span></div>
+            <div class="tech-card"><div class="tech-icon">🧪</div><h3>TestNG 7</h3><span>Test Runner</span></div>
+            <div class="tech-card"><div class="tech-icon">📦</div><h3>Maven</h3><span>Build Tool</span></div>
+            <div class="tech-card"><div class="tech-icon">🔧</div><h3>WebDriverMgr</h3><span>Driver Setup</span></div>
+            <div class="tech-card"><div class="tech-icon">📝</div><h3>Log4j2</h3><span>Logging</span></div>
+            <div class="tech-card"><div class="tech-icon">📊</div><h3>Allure</h3><span>Reporting</span></div>
+            <div class="tech-card"><div class="tech-icon">📄</div><h3>Commons CSV</h3><span>Data</span></div>
+            <div class="tech-card"><div class="tech-icon">🔗</div><h3>Jackson</h3><span>JSON</span></div>
+            <div class="tech-card"><div class="tech-icon">⚙️</div><h3>GitHub Actions</h3><span>CI/CD</span></div>
+        </div>
+    </div>
+</section>
+
+<!-- Features -->
+<section id="features" style="background: linear-gradient(180deg, var(--bg-dark), #111827);">
+    <div class="container">
+        <h2 class="section-title">⭐ Enterprise Features</h2>
+        <p class="section-subtitle">Production-ready capabilities for scalable test automation</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon icon-blue">🔒</div>
+                <h3>Thread-Safe WebDriver</h3>
+                <p>ThreadLocal implementation ensures each thread gets its own isolated WebDriver instance for reliable parallel execution.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon icon-green">⚡</div>
+                <h3>Parallel Execution</h3>
+                <p>TestNG DataProvider with configurable thread count for faster test execution across multiple scenarios simultaneously.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon icon-orange">🌐</div>
+                <h3>Cross-Browser Support</h3>
+                <p>Run tests on Chrome, Firefox, and Edge with configurable browser options, headless mode, and WebDriverManager auto-setup.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon icon-purple">🌍</div>
+                <h3>Multi-Environment</h3>
+                <p>Environment-based configuration (QA, UAT) with property files. Switch environments via command line parameters.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon icon-cyan">📸</div>
+                <h3>Screenshot on Failure</h3>
+                <p>Automatic timestamped screenshot capture on test failure with Allure report attachment and disk storage.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon icon-blue">⏳</div>
+                <h3>Smart Wait Utilities</h3>
+                <p>Centralized explicit wait wrapper with configurable timeouts for visibility, clickability, presence, and more.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon icon-green">📝</div>
+                <h3>Centralized Logging</h3>
+                <p>Log4j2 with console and rolling file appenders. Framework-specific logger wrapper for clean, consistent logs.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon icon-orange">🔄</div>
+                <h3>Failed Test Rerun</h3>
+                <p>Dedicated FailedTestRunner automatically reruns failed scenarios from the previous execution for reliability.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon icon-purple">📊</div>
+                <h3>Data-Driven Testing</h3>
+                <p>Support for Cucumber DataTable, CSV (Apache Commons), and JSON (Jackson) test data sources.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon icon-cyan">🏷️</div>
+                <h3>Tag-Based Execution</h3>
+                <p>Execute specific test suites with @smoke, @regression, @sanity, @e2e tags and boolean combinations.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon icon-blue">🏗️</div>
+                <h3>Page Object Model</h3>
+                <p>Clean POM with abstract BasePage providing 30+ reusable methods. SOLID principles compliance throughout.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon icon-green">🔄</div>
+                <h3>CI/CD Pipeline</h3>
+                <p>GitHub Actions workflow with Java 17 setup, Maven caching, test execution, and artifact uploads.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Architecture -->
+<section id="architecture">
+    <div class="container">
+        <h2 class="section-title">🏗 Architecture</h2>
+        <p class="section-subtitle">Layered architecture following SOLID principles</p>
+        <div class="architecture-box">
+<pre>
+┌──────────────────────────────────────────────────────────────────┐
+│                      TEST EXECUTION LAYER                        │
+│   ┌──────────┐   ┌──────────────┐   ┌────────────────────────┐  │
+│   │  TestNG   │   │  Cucumber    │   │  GitHub Actions CI/CD  │  │
+│   │  Runner   │   │  Features    │   │  Pipeline              │  │
+│   └─────┬────┘   └──────┬───────┘   └────────────────────────┘  │
+│         │               │                                        │
+│   ┌─────▼───────────────▼───────────────────────────────────┐    │
+│   │            STEP DEFINITIONS + HOOKS                      │    │
+│   │   Glue code binding Gherkin steps to Page Objects        │    │
+│   └─────┬────────────────────────────────────────────────────┘    │
+│         │                                                         │
+│   ┌─────▼────────────────────────────────────────────────────┐    │
+│   │               PAGE OBJECT LAYER                           │    │
+│   │  HomePage │ LoginPage │ ProductsPage │ CartPage │ etc.    │    │
+│   └─────┬────────────────────────────────────────────────────┘    │
+│         │                                                         │
+│   ┌─────▼────────────────────────────────────────────────────┐    │
+│   │              BASE PAGE (Abstract)                         │    │
+│   │  click() │ type() │ getText() │ scrollTo() │ hover()      │    │
+│   └─────┬────────────────────────────────────────────────────┘    │
+│         │                                                         │
+│   ┌─────▼────────────────────────────────────────────────────┐    │
+│   │              CORE FRAMEWORK LAYER                         │    │
+│   │  DriverManager │ DriverFactory │ ConfigReader │ Utils     │    │
+│   │  (ThreadLocal)   (Factory)       (Singleton)    (Static)  │    │
+│   └──────────────────────────────────────────────────────────┘    │
+└──────────────────────────────────────────────────────────────────┘
+</pre>
+        </div>
+    </div>
+</section>
+
+<!-- Test Scenarios -->
+<section id="scenarios" style="background: linear-gradient(180deg, var(--bg-dark), #111827);">
+    <div class="container">
+        <h2 class="section-title">🧪 Test Scenarios</h2>
+        <p class="section-subtitle">Comprehensive test coverage for automationexercise.com</p>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Scenario</th>
+                        <th>Feature File</th>
+                        <th>Tags</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>User Registration</td>
+                        <td><code>user_registration.feature</code></td>
+                        <td><span class="tag tag-smoke">@smoke</span><span class="tag tag-regression">@registration</span><span class="tag tag-sanity">@sanity</span></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Login (Valid + Invalid)</td>
+                        <td><code>user_login.feature</code></td>
+                        <td><span class="tag tag-smoke">@smoke</span><span class="tag tag-regression">@login</span><span class="tag tag-sanity">@sanity</span></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>User Logout</td>
+                        <td><code>user_logout.feature</code></td>
+                        <td><span class="tag tag-smoke">@smoke</span><span class="tag tag-regression">@logout</span><span class="tag tag-sanity">@sanity</span></td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Add Product to Cart</td>
+                        <td><code>add_to_cart.feature</code></td>
+                        <td><span class="tag tag-smoke">@smoke</span><span class="tag tag-regression">@cart</span><span class="tag tag-sanity">@sanity</span></td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Remove Product from Cart</td>
+                        <td><code>remove_from_cart.feature</code></td>
+                        <td><span class="tag tag-regression">@cart</span><span class="tag tag-regression">@remove</span></td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Search Product</td>
+                        <td><code>product_search.feature</code></td>
+                        <td><span class="tag tag-smoke">@smoke</span><span class="tag tag-regression">@search</span><span class="tag tag-sanity">@sanity</span></td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Checkout Flow</td>
+                        <td><code>checkout.feature</code></td>
+                        <td><span class="tag tag-smoke">@smoke</span><span class="tag tag-e2e">@e2e</span><span class="tag tag-regression">@checkout</span></td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>UI Validation</td>
+                        <td><code>ui_validation.feature</code></td>
+                        <td><span class="tag tag-smoke">@smoke</span><span class="tag tag-regression">@ui</span><span class="tag tag-sanity">@sanity</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Start -->
+<section id="quickstart">
+    <div class="container">
+        <h2 class="section-title">🚀 Quick Start</h2>
+        <p class="section-subtitle">Get up and running in minutes</p>
+        <div class="quickstart-steps">
+            <div class="step-card">
+                <div class="step-num">1</div>
+                <h3>Clone the Repository</h3>
+                <div class="code-block">git clone https://github.com/wbandara-tech/SeleniumCucumber-BDD-Enterprise-Framework.git
+cd SeleniumCucumber-BDD-Enterprise-Framework</div>
+            </div>
+            <div class="step-card">
+                <div class="step-num">2</div>
+                <h3>Install Dependencies</h3>
+                <div class="code-block">mvn clean install -DskipTests</div>
+            </div>
+            <div class="step-card">
+                <div class="step-num">3</div>
+                <h3>Run Smoke Tests</h3>
+                <div class="code-block">mvn clean test -Dcucumber.filter.tags="@smoke"</div>
+            </div>
+            <div class="step-card">
+                <div class="step-num">4</div>
+                <h3>Run All Tests</h3>
+                <div class="code-block">mvn clean test -Denv=qa -Dbrowser=chrome -Dheadless=true</div>
+            </div>
+            <div class="step-card">
+                <div class="step-num">5</div>
+                <h3>Generate Report</h3>
+                <div class="code-block">mvn allure:serve</div>
+            </div>
+            <div class="step-card">
+                <div class="step-num">6</div>
+                <h3>Tag Execution</h3>
+                <div class="code-block">mvn clean test -Dcucumber.filter.tags="@regression"
+mvn clean test -Dcucumber.filter.tags="@sanity"
+mvn clean test -Dcucumber.filter.tags="@smoke and @login"</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <div class="footer-author">👨‍💻 Wasantha Bandara</div>
+    <p style="color: var(--text-secondary);">QA Automation Engineer</p>
+    <div class="footer-links">
+        <a href="https://github.com/wbandara-tech" target="_blank">🔗 GitHub Profile</a>
+        <a href="https://github.com/wbandara-tech/SeleniumCucumber-BDD-Enterprise-Framework" target="_blank">📂 Source Code</a>
+        <a href="https://github.com/wbandara-tech/SeleniumCucumber-BDD-Enterprise-Framework/actions" target="_blank">⚙️ CI/CD Pipeline</a>
+    </div>
+    <p class="footer-copy">© 2026 Wasantha Bandara. Built with ❤️ for the QA Community.</p>
+</footer>
+
+</body>
+</html>
+
