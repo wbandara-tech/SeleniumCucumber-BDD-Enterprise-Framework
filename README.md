@@ -4,12 +4,11 @@
 ![Java](https://img.shields.io/badge/Java-17-orange?logo=openjdk)
 ![Selenium](https://img.shields.io/badge/Selenium-4.27-green?logo=selenium)
 ![Cucumber](https://img.shields.io/badge/Cucumber-7.20-brightgreen?logo=cucumber)
-![TestNG](https://img.shields.io/badge/TestNG-7.10-blue)
 ![Maven](https://img.shields.io/badge/Maven-Build-red?logo=apachemaven)
 ![Allure](https://img.shields.io/badge/Allure-Reports-blueviolet)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
-A **production-grade, enterprise-level** BDD Test Automation Framework built with **Selenium 4**, **Cucumber**, and **TestNG**. Designed with **SOLID principles**, **clean architecture**, and **industry best practices** for scalable, maintainable, and reliable test automation.
+A **production-grade, enterprise-level** BDD Test Automation Framework built with **Selenium 4**, **Cucumber**, and **JUnit**. Designed with **SOLID principles**, **clean architecture**, and **industry best practices** for scalable, maintainable, and reliable test automation.
 
 ---
 
@@ -37,7 +36,7 @@ A **production-grade, enterprise-level** BDD Test Automation Framework built wit
 ┌──────────────────────────────────────────────────────────────┐
 │                    TEST EXECUTION LAYER                       │
 │  ┌──────────┐  ┌──────────────┐  ┌────────────────────────┐ │
-│  │  TestNG   │  │  Cucumber    │  │  GitHub Actions CI/CD  │ │
+│  │  JUnit    │  │  Cucumber    │  │  GitHub Actions CI/CD  │ │
 │  │  Runner   │  │  Features    │  │  Pipeline              │ │
 │  └────┬─────┘  └──────┬───────┘  └────────────────────────┘ │
 │       │               │                                      │
@@ -73,7 +72,7 @@ A **production-grade, enterprise-level** BDD Test Automation Framework built wit
 | **Java** | 17 | Programming Language |
 | **Selenium** | 4.27 | Browser Automation |
 | **Cucumber** | 7.20 | BDD Framework |
-| **TestNG** | 7.10 | Test Runner & Assertions |
+| **JUnit** | 4.13 | Test Runner & Assertions |
 | **Maven** | 3.x | Build & Dependency Management |
 | **WebDriverManager** | 5.9 | Automatic Driver Management |
 | **Log4j2** | 2.24 | Centralized Logging |
@@ -154,7 +153,6 @@ SeleniumCucumber-BDD-Enterprise-Framework/
 │           └── log4j2.xml
 ├── .gitignore
 ├── pom.xml
-├── testng.xml
 └── README.md
 ```
 
@@ -207,7 +205,6 @@ mvn clean test -Denv=uat
 ```bash
 mvn clean test -Dbrowser=chrome
 mvn clean test -Dbrowser=edge
-mvn clean test -Dbrowser=firefox
 ```
 
 ### Run in headless mode:
@@ -215,9 +212,14 @@ mvn clean test -Dbrowser=firefox
 mvn clean test -Dheadless=true
 ```
 
+### Run in headed mode:
+```bash
+mvn clean test -Dheadless=false
+```
+
 ### Run with combined options:
 ```bash
-mvn clean test -Denv=qa -Dbrowser=chrome -Dheadless=true
+mvn clean test -Denv=qa -Dbrowser=chrome -Dheadless=false
 ```
 
 ---
@@ -311,8 +313,8 @@ Reports are available in:
 | # | Feature | Description |
 |---|---|---|
 | 1 | **Thread-Safe WebDriver** | ThreadLocal implementation for parallel execution |
-| 2 | **Parallel Execution** | TestNG DataProvider with configurable thread count |
-| 3 | **Cross-Browser** | Chrome, Firefox, Edge support |
+| 2 | **Parallel Execution** | Configurable thread count |
+| 3 | **Cross-Browser** | Chrome, Edge support |
 | 4 | **Multi-Environment** | QA, UAT environment configurations |
 | 5 | **Screenshot on Failure** | Timestamped screenshots with Allure attachment |
 | 6 | **Explicit Wait Wrapper** | Centralized wait utilities |
