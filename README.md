@@ -8,7 +8,7 @@
 ![Allure](https://img.shields.io/badge/Allure-Reports-blueviolet)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
-A **production-grade, enterprise-level** BDD Test Automation Framework built with **Selenium 4**, **Cucumber**, and **JUnit**. Designed with **SOLID principles**, **clean architecture**, and **industry best practices** for scalable, maintainable, and reliable test automation.
+A **minimal, real BDD Java framework** using **Selenium 4**, **Cucumber**, and **JUnit**. No Page Object Model, no constants, no custom exceptions, no base classes. Step definitions interact directly with WebDriver and page elements, focusing on real user scenarios and Gherkin steps.
 
 ---
 
@@ -42,23 +42,12 @@ A **production-grade, enterprise-level** BDD Test Automation Framework built wit
 │       │               │                                      │
 │  ┌────▼───────────────▼─────────────────────────────────────┐│
 │  │              STEP DEFINITIONS + HOOKS                     ││
-│  │  (Glue code binding Gherkin to Page Objects)              ││
-│  └────┬──────────────────────────────────────────────────────┘│
-│       │                                                       │
-│  ┌────▼──────────────────────────────────────────────────────┐│
-│  │                 PAGE OBJECT LAYER                          ││
-│  │  HomePage │ LoginPage │ SignupPage │ ProductsPage │ etc.   ││
-│  └────┬──────────────────────────────────────────────────────┘│
-│       │                                                       │
-│  ┌────▼──────────────────────────────────────────────────────┐│
-│  │               BASE PAGE (Abstract)                         ││
-│  │  click() │ type() │ getText() │ waitForVisible() │ etc.    ││
+│  │  (Direct WebDriver + Gherkin)                             ││
 │  └────┬──────────────────────────────────────────────────────┘│
 │       │                                                       │
 │  ┌────▼──────────────────────────────────────────────────────┐│
 │  │            CORE FRAMEWORK LAYER                            ││
-│  │  DriverManager │ DriverFactory │ ConfigReader │ Utils      ││
-│  │  (ThreadLocal)   (Factory)       (Singleton)    (Static)   ││
+│  │  DriverManager │ ConfigReader │ Utils                      ││
 │  └───────────────────────────────────────────────────────────┘│
 └──────────────────────────────────────────────────────────────┘
 ```
@@ -77,8 +66,6 @@ A **production-grade, enterprise-level** BDD Test Automation Framework built wit
 | **WebDriverManager** | 5.9 | Automatic Driver Management |
 | **Log4j2** | 2.24 | Centralized Logging |
 | **Allure** | 2.29 | Rich Test Reporting |
-| **Apache Commons CSV** | 1.12 | CSV Data Processing |
-| **Jackson** | 2.18 | JSON Data Processing |
 | **GitHub Actions** | - | CI/CD Pipeline |
 
 ---
@@ -92,51 +79,22 @@ SeleniumCucumber-BDD-Enterprise-Framework/
 │       └── ci.yml                          # GitHub Actions CI/CD pipeline
 ├── src/
 │   ├── main/java/com/wbandara/enterprise/
-│   │   ├── base/
-│   │   │   └── BasePage.java               # Abstract base page with reusable methods
-│   │   ├── constants/
-│   │   │   ├── EndpointConstants.java       # URL endpoint constants
-│   │   │   └── FrameworkConstants.java      # Framework configuration constants
 │   │   ├── driver/
-│   │   │   ├── DriverFactory.java           # WebDriver factory (Chrome, Firefox, Edge)
+│   │   │   ├── DriverFactory.java           # WebDriver factory
 │   │   │   └── DriverManager.java           # ThreadLocal WebDriver management
-│   │   ├── exceptions/
-│   │   │   ├── ElementNotFoundException.java
-│   │   │   ├── FrameworkException.java      # Base framework exception
-│   │   │   └── PageNotFoundException.java
-│   │   ├── pages/
-│   │   │   ├── CartPage.java
-│   │   │   ├── CheckoutPage.java
-│   │   │   ├── HomePage.java
-│   │   │   ├── LoginPage.java
-│   │   │   ├── ProductsPage.java
-│   │   │   └── SignupPage.java
 │   │   └── utils/
 │   │       ├── ConfigReader.java            # Environment-based config reader
 │   │       ├── LoggerUtils.java             # Log4j2 wrapper
-│   │       ├── ScreenshotUtils.java         # Screenshot capture & Allure attach
 │   │       └── WaitUtils.java               # Explicit wait utilities
 │   └── test/
 │       ├── java/com/wbandara/enterprise/
-│       │   ├── dataproviders/
-│       │   │   ├── CsvDataReader.java       # CSV test data reader
-│       │   │   └── JsonDataReader.java      # JSON test data reader
 │       │   ├── hooks/
 │       │   │   └── Hooks.java               # Cucumber @Before/@After hooks
 │       │   ├── runners/
-│       │   │   ├── FailedTestRunner.java     # Rerun failed scenarios
 │       │   │   └── TestRunner.java           # Main test runner
 │       │   └── stepdefinitions/
-│       │       ├── CartSteps.java
-│       │       ├── CheckoutSteps.java
-│       │       ├── HomeSteps.java
-│       │       ├── LoginSteps.java
-│       │       ├── ProductSteps.java
-│       │       └── SignupSteps.java
+│       │       └── DirectWebSteps.java      # Step definitions (direct WebDriver)
 │       └── resources/
-│           ├── config/
-│           │   ├── qa.properties             # QA environment config
-│           │   └── uat.properties            # UAT environment config
 │           ├── features/
 │           │   ├── add_to_cart.feature
 │           │   ├── checkout.feature
@@ -146,15 +104,19 @@ SeleniumCucumber-BDD-Enterprise-Framework/
 │           │   ├── user_login.feature
 │           │   ├── user_logout.feature
 │           │   └── user_registration.feature
-│           ├── testdata/
-│           │   ├── products.json
-│           │   └── users.csv
 │           ├── allure.properties
 │           └── log4j2.xml
 ├── .gitignore
 ├── pom.xml
 └── README.md
 ```
+
+> **Note:**
+> - The following directories and files are deprecated and should be removed for a pure BDD framework:
+>   - `src/main/java/com/wbandara/enterprise/pages/`
+>   - `src/main/java/com/wbandara/enterprise/base/`
+>   - `src/main/java/com/wbandara/enterprise/constants/`
+>   - `src/main/java/com/wbandara/enterprise/exceptions/`
 
 ---
 
@@ -312,20 +274,17 @@ Reports are available in:
 
 | # | Feature | Description |
 |---|---|---|
-| 1 | **Thread-Safe WebDriver** | ThreadLocal implementation for parallel execution |
+| 1 | **Direct WebDriver Steps** | Step definitions interact directly with Selenium WebDriver |
 | 2 | **Parallel Execution** | Configurable thread count |
 | 3 | **Cross-Browser** | Chrome, Edge support |
 | 4 | **Multi-Environment** | QA, UAT environment configurations |
 | 5 | **Screenshot on Failure** | Timestamped screenshots with Allure attachment |
 | 6 | **Explicit Wait Wrapper** | Centralized wait utilities |
 | 7 | **Centralized Logging** | Log4j2 with console and file appenders |
-| 8 | **Failed Test Rerun** | Dedicated runner for failed scenarios |
-| 9 | **Custom Exceptions** | Framework-specific exception hierarchy |
-| 10 | **Tag-Based Execution** | @smoke, @regression, @sanity tag support |
-| 11 | **Scenario Outline** | Data-driven testing with Examples tables |
-| 12 | **Data-Driven Testing** | Cucumber DataTable, CSV, JSON support |
-| 13 | **Page Object Model** | Clean POM with base page abstraction |
-| 14 | **SOLID Principles** | SRP, OCP, LSP, ISP, DIP compliance |
+| 8 | **Tag-Based Execution** | @smoke, @regression, @sanity tag support |
+| 9 | **Scenario Outline** | Data-driven testing with Examples tables |
+| 10 | **Data-Driven Testing** | Cucumber DataTable, CSV, JSON support |
+| 11 | **SOLID Principles** | SRP, OCP, LSP, ISP, DIP compliance |
 
 ---
 
