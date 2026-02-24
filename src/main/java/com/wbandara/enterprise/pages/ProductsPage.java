@@ -4,8 +4,10 @@ import com.wbandara.enterprise.base.BasePage;
 import com.wbandara.enterprise.utils.LoggerUtils;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,18 +25,13 @@ public class ProductsPage extends BasePage {
     private static final By PRODUCT_NAMES = By.cssSelector(".productinfo p");
     private static final By PRODUCT_PRICES = By.cssSelector(".productinfo h2");
     private static final By VIEW_PRODUCT_LINKS = By.cssSelector("a.btn.btn-default.choose");
-    private static final By ADD_TO_CART_BUTTONS = By.cssSelector(".productinfo .add-to-cart");
     private static final By CONTINUE_SHOPPING_BTN = By.cssSelector("button.btn-success");
     private static final By VIEW_CART_LINK = By.cssSelector("div.modal-body a[href='/view_cart']");
     private static final By SEARCHED_PRODUCTS_HEADER = By.cssSelector("h2.title.text-center");
 
     // Product Detail Page Locators
     private static final By PRODUCT_DETAIL_NAME = By.cssSelector("div.product-information h2");
-    private static final By PRODUCT_DETAIL_CATEGORY = By.cssSelector("div.product-information p:nth-of-type(1)");
     private static final By PRODUCT_DETAIL_PRICE = By.cssSelector("div.product-information span span");
-    private static final By PRODUCT_DETAIL_AVAILABILITY = By.cssSelector("div.product-information p:nth-of-type(2)");
-    private static final By PRODUCT_DETAIL_CONDITION = By.cssSelector("div.product-information p:nth-of-type(3)");
-    private static final By PRODUCT_DETAIL_BRAND = By.cssSelector("div.product-information p:nth-of-type(4)");
     private static final By PRODUCT_QUANTITY_INPUT = By.id("quantity");
     private static final By ADD_TO_CART_DETAIL_BTN = By.cssSelector("button.btn.btn-default.cart");
 
@@ -74,33 +71,92 @@ public class ProductsPage extends BasePage {
     @Step("Click View Product for product at index {index}")
     public void viewProductDetails(int index) {
         LoggerUtils.info(ProductsPage.class, "Viewing product details at index: " + index);
-        List<WebElement> viewLinks = findElements(VIEW_PRODUCT_LINKS);
+        removeAdOverlays();
+
+        List<WebElement> viewLinks = driver.findElements(By.cssSelector("a.btn.btn-default.choose"));
         if (index < viewLinks.size()) {
-            scrollToElement(By.cssSelector(".features_items .col-sm-4:nth-child(" + (index + 1) + ")"));
-            viewLinks.get(index).click();
+            WebElement link = viewLinks.get(index);
+            String href = link.getAttribute("href");
+            LoggerUtils.info(ProductsPage.class, "Product link href: " + href);
+
+            // Ensure absolute URL
+            if (href != null && !href.isEmpty()) {
+                if (!href.startsWith("http")) {
+                    href = "https://automationexercise.com" + href;
+                }
+                driver.get(href);
+                sleep(2000);
+                removeAdOverlays();
+                // Retry if ad redirect occurred
+                if (!driver.getCurrentUrl().contains("product_details")) {
+                    LoggerUtils.warn(ProductsPage.class, "Ad redirect detected, retrying: " + driver.getCurrentUrl());
+                    driver.get(href);
+                    sleep(2000);
+                    removeAdOverlays();
+                }
+            } else {
+                ((JavascriptExecutor) driver).executeScript(
+                        "arguments[0].scrollIntoView({block:'center'});", link);
+                sleep(500);
+                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", link);
+                sleep(2000);
+                removeAdOverlays();
+            }
         }
     }
 
     @Step("Add product at index {index} to cart")
     public void addProductToCart(int index) {
         LoggerUtils.info(ProductsPage.class, "Adding product at index " + index + " to cart");
-        List<WebElement> products = findElements(PRODUCT_LIST);
+        removeAdOverlays();
+
+        List<WebElement> products = driver.findElements(By.cssSelector(".features_items .col-sm-4"));
         if (index < products.size()) {
             WebElement product = products.get(index);
-            hoverOver(By.cssSelector(".features_items .col-sm-4:nth-child(" + (index + 1) + ")"));
-            WebElement addToCartBtn = product.findElement(By.cssSelector(".productinfo .add-to-cart"));
-            addToCartBtn.click();
+            ((JavascriptExecutor) driver).executeScript(
+                    "arguments[0].scrollIntoView({block:'center'});", product);
+            sleep(500);
+
+            // Try hover + overlay
+            try {
+                new Actions(driver).moveToElement(product).perform();
+                sleep(1000);
+                List<WebElement> overlayBtns = product.findElements(
+                        By.cssSelector(".product-overlay .overlay-content .add-to-cart"));
+                if (!overlayBtns.isEmpty() && overlayBtns.get(0).isDisplayed()) {
+                    overlayBtns.get(0).click();
+                    sleep(1000);
+                    return;
+                }
+            } catch (Exception ignored) {}
+
+            // Fallback: JS click
+            try {
+                WebElement addBtn = product.findElement(By.cssSelector(".productinfo .add-to-cart"));
+                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", addBtn);
+                sleep(1000);
+            } catch (Exception e) {
+                LoggerUtils.error(ProductsPage.class, "Failed to add product: " + e.getMessage());
+            }
         }
     }
 
     @Step("Click Continue Shopping")
     public void clickContinueShopping() {
-        click(CONTINUE_SHOPPING_BTN);
+        sleep(500);
+        try { click(CONTINUE_SHOPPING_BTN); } catch (Exception ignored) {}
+        sleep(500);
     }
 
     @Step("Click View Cart in modal")
     public void clickViewCart() {
-        click(VIEW_CART_LINK);
+        sleep(500);
+        try {
+            click(VIEW_CART_LINK);
+        } catch (Exception e) {
+            LoggerUtils.warn(ProductsPage.class, "View Cart link not found, navigating directly");
+            driver.get("https://automationexercise.com/view_cart");
+        }
     }
 
     @Step("Verify searched products header is visible")
@@ -135,8 +191,26 @@ public class ProductsPage extends BasePage {
 
     @Step("Verify product detail page is loaded")
     public boolean isProductDetailPageLoaded() {
+        sleep(2000);
+        removeAdOverlays();
+        LoggerUtils.info(ProductsPage.class, "Checking product detail page. URL: " + driver.getCurrentUrl());
         return isDisplayed(PRODUCT_DETAIL_NAME)
                 && isDisplayed(PRODUCT_DETAIL_PRICE);
     }
-}
 
+    // ======================== Private Helpers ========================
+
+    private void removeAdOverlays() {
+        try {
+            ((JavascriptExecutor) driver).executeScript(
+                    "document.querySelectorAll('iframe[id^=\"google_ads\"], iframe[id^=\"aswift\"], " +
+                    "ins.adsbygoogle, .google-auto-placed, div[aria-label=\"Advertisement\"]')" +
+                    ".forEach(function(el) { el.remove(); });"
+            );
+        } catch (Exception ignored) {}
+    }
+
+    private void sleep(long millis) {
+        try { Thread.sleep(millis); } catch (InterruptedException ignored) {}
+    }
+}

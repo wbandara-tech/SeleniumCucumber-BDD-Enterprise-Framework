@@ -76,6 +76,21 @@ public final class DriverFactory {
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--remote-allow-origins=*");
         options.addArguments("--disable-gpu");
+        // Block ads and tracking to prevent ad interstitial redirects
+        options.addArguments("--disable-features=InterestCohort");
+        options.addArguments("--host-resolver-rules=MAP *.googlesyndication.com 127.0.0.1," +
+                "MAP *.googleadservices.com 127.0.0.1," +
+                "MAP *.doubleclick.net 127.0.0.1," +
+                "MAP *.google-analytics.com 127.0.0.1," +
+                "MAP *.adservice.google.com 127.0.0.1," +
+                "MAP *.pagead2.googlesyndication.com 127.0.0.1");
+
+        // Set preferences to block ads
+        java.util.Map<String, Object> prefs = new java.util.HashMap<>();
+        prefs.put("profile.managed_default_content_settings.images", 1);
+        prefs.put("profile.default_content_setting_values.notifications", 2);
+        prefs.put("profile.managed_default_content_settings.popups", 2);
+        options.setExperimentalOption("prefs", prefs);
 
         if (headless) {
             options.addArguments("--headless=new");
@@ -108,6 +123,12 @@ public final class DriverFactory {
         options.addArguments("--disable-popup-blocking");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--disable-features=InterestCohort");
+        options.addArguments("--host-resolver-rules=MAP *.googlesyndication.com 127.0.0.1," +
+                "MAP *.googleadservices.com 127.0.0.1," +
+                "MAP *.doubleclick.net 127.0.0.1," +
+                "MAP *.google-analytics.com 127.0.0.1," +
+                "MAP *.adservice.google.com 127.0.0.1");
 
         if (headless) {
             options.addArguments("--headless=new");

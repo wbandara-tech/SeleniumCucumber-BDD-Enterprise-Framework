@@ -6,7 +6,7 @@ import com.wbandara.enterprise.utils.LoggerUtils;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.testng.Assert;
+import org.junit.jupiter.api.Assertions;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public class ProductSteps {
 
     @Then("the products page should be displayed")
     public void theProductsPageShouldBeDisplayed() {
-        Assert.assertTrue(productsPage.isProductsPageLoaded(), "Products page is not loaded");
+        Assertions.assertTrue(productsPage.isProductsPageLoaded(), "Products page is not loaded");
     }
 
     @When("user searches for product {string}")
@@ -34,7 +34,7 @@ public class ProductSteps {
 
     @Then("search results should be displayed")
     public void searchResultsShouldBeDisplayed() {
-        Assert.assertTrue(productsPage.isSearchedProductsVisible(), "Search results not displayed");
+        Assertions.assertTrue(productsPage.isSearchedProductsVisible(), "Search results not displayed");
     }
 
     @Then("search results should contain {string}")
@@ -42,13 +42,13 @@ public class ProductSteps {
         List<String> products = productsPage.getProductNames();
         boolean found = products.stream()
                 .anyMatch(name -> name.toLowerCase().contains(productName.toLowerCase()));
-        Assert.assertTrue(found, "Product '" + productName + "' not found in search results. Found: " + products);
+        Assertions.assertTrue(found, "Product '" + productName + "' not found in search results. Found: " + products);
     }
 
     @Then("products list should not be empty")
     public void productsListShouldNotBeEmpty() {
         int count = productsPage.getProductCount();
-        Assert.assertTrue(count > 0, "Products list is empty");
+        Assertions.assertTrue(count > 0, "Products list is empty");
     }
 
     @When("user clicks View Product for product at index {int}")
@@ -58,21 +58,21 @@ public class ProductSteps {
 
     @Then("product detail page should be displayed")
     public void productDetailPageShouldBeDisplayed() {
-        Assert.assertTrue(productsPage.isProductDetailPageLoaded(), "Product detail page not loaded");
+        Assertions.assertTrue(productsPage.isProductDetailPageLoaded(), "Product detail page not loaded");
     }
 
     @Then("product name should be visible")
     public void productNameShouldBeVisible() {
         String name = productsPage.getProductDetailName();
-        Assert.assertNotNull(name, "Product name is null");
-        Assert.assertFalse(name.isEmpty(), "Product name is empty");
+        Assertions.assertNotNull(name, "Product name is null");
+        Assertions.assertFalse(name.isEmpty(), "Product name is empty");
     }
 
     @Then("product price should be visible")
     public void productPriceShouldBeVisible() {
         String price = productsPage.getProductDetailPrice();
-        Assert.assertNotNull(price, "Product price is null");
-        Assert.assertFalse(price.isEmpty(), "Product price is empty");
+        Assertions.assertNotNull(price, "Product price is null");
+        Assertions.assertFalse(price.isEmpty(), "Product price is empty");
     }
 
     @When("user adds product at index {int} to cart from products page")
@@ -100,4 +100,3 @@ public class ProductSteps {
         productsPage.addToCartFromDetailPage();
     }
 }
-

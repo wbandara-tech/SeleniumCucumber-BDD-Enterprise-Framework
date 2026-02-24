@@ -7,7 +7,12 @@ import com.wbandara.enterprise.utils.ScreenshotUtils;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+import java.util.List;
 
 /**
  * Cucumber Hooks for setup and teardown.
@@ -32,6 +37,9 @@ public class Hooks {
         String baseUrl = ConfigReader.getInstance().getBaseUrl();
         driver.get(baseUrl);
         LoggerUtils.info(Hooks.class, "Navigated to: " + baseUrl);
+
+        // Handle Google Ads consent popup and ad overlays
+        dismissAdsAndConsent(driver);
     }
 
     /**
@@ -47,11 +55,8 @@ public class Hooks {
                 LoggerUtils.error(Hooks.class, "SCENARIO FAILED: " + scenario.getName());
 
                 if (ConfigReader.getInstance().getBoolean("screenshot.on.failure")) {
-                    // Capture screenshot and attach to Allure
                     byte[] screenshot = ScreenshotUtils.captureAndAttachToAllure(driver, scenario.getName());
-                    // Also attach to Cucumber report
                     scenario.attach(screenshot, "image/png", "Failure_Screenshot_" + scenario.getName());
-                    // Save to disk
                     ScreenshotUtils.captureScreenshot(driver, scenario.getName());
                 }
             } else {
@@ -67,5 +72,59 @@ public class Hooks {
             LoggerUtils.info(Hooks.class, "========================================");
         }
     }
-}
 
+    /**
+     * Dismisses Google Ads consent dialog and removes ad overlays.
+     * automationexercise.com loads Google Ads that can block test interactions.
+     */
+    private void dismissAdsAndConsent(WebDriver driver) {
+        try {
+            Thread.sleep(1000);
+
+            // Quickly remove any ad overlays via JavaScript
+            ((JavascriptExecutor) driver).executeScript(
+                    "var ads = document.querySelectorAll(" +
+                    "'iframe[id^=\"google_ads\"], iframe[id^=\"aswift\"], " +
+                    "div[id^=\"google_ads\"], ins.adsbygoogle, " +
+                    "div.ad_box, #ad_position_box, .google-auto-placed, " +
+                    "div[aria-label=\"Advertisement\"]');" +
+                    "ads.forEach(function(ad) { ad.remove(); });" +
+                    "document.querySelectorAll('body > div').forEach(function(el) {" +
+                    "  var style = window.getComputedStyle(el);" +
+                    "  if (style.position === 'fixed' && parseInt(style.zIndex) > 999) { el.remove(); }" +
+                    "});"
+            );
+
+            // Try to dismiss Google consent iframe (with short timeout)
+            driver.manage().timeouts().implicitlyWait(java.time.Duration.ofSeconds(1));
+            List<WebElement> iframes = driver.findElements(By.tagName("iframe"));
+            for (WebElement iframe : iframes) {
+                try {
+                    String src = iframe.getAttribute("src");
+                    if (src != null && src.contains("consent")) {
+                        driver.switchTo().frame(iframe);
+                        List<WebElement> consentBtns = driver.findElements(
+                                By.cssSelector("button.fc-cta-consent, button[aria-label='Consent'], .fc-button-label"));
+                        if (!consentBtns.isEmpty()) {
+                            consentBtns.get(0).click();
+                            LoggerUtils.info(Hooks.class, "Dismissed consent dialog");
+                        }
+                        driver.switchTo().defaultContent();
+                        break;
+                    }
+                } catch (Exception ignored) {
+                    driver.switchTo().defaultContent();
+                }
+            }
+            // Restore implicit wait
+            driver.manage().timeouts().implicitlyWait(java.time.Duration.ofSeconds(10));
+
+            LoggerUtils.info(Hooks.class, "Ad cleanup completed");
+        } catch (Exception e) {
+            LoggerUtils.debug(Hooks.class, "Ad handling: " + e.getMessage());
+            try {
+                driver.manage().timeouts().implicitlyWait(java.time.Duration.ofSeconds(10));
+            } catch (Exception ignored) {}
+        }
+    }
+}

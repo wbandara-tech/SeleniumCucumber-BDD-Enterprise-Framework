@@ -10,7 +10,7 @@
     <packaging>jar</packaging>
 
     <name>SeleniumCucumber-BDD-Enterprise-Framework</name>
-    <description>Production-grade BDD Automation Framework using Selenium 4, Cucumber, and TestNG</description>
+    <description>Production-grade BDD Automation Framework using Selenium 4 and Cucumber</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -21,11 +21,11 @@
         <!-- Dependency Versions -->
         <selenium.version>4.27.0</selenium.version>
         <cucumber.version>7.20.1</cucumber.version>
-        <testng.version>7.10.2</testng.version>
         <webdrivermanager.version>5.9.2</webdrivermanager.version>
         <log4j.version>2.24.3</log4j.version>
         <allure.version>2.29.1</allure.version>
         <allure.cucumber.version>2.29.1</allure.cucumber.version>
+        <allure.commandline.version>2.25.0</allure.commandline.version>
         <jackson.version>2.18.2</jackson.version>
         <commons.csv.version>1.12.0</commons.csv.version>
 
@@ -62,20 +62,13 @@
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-testng</artifactId>
+            <artifactId>cucumber-picocontainer</artifactId>
             <version>${cucumber.version}</version>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-picocontainer</artifactId>
-            <version>${cucumber.version}</version>
-        </dependency>
-
-        <!-- TestNG -->
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>${testng.version}</version>
+            <artifactId>cucumber-junit-platform-engine</artifactId>
+            <version>7.11.2</version>
         </dependency>
 
         <!-- Log4j2 -->
@@ -100,11 +93,6 @@
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-cucumber7-jvm</artifactId>
             <version>${allure.cucumber.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-testng</artifactId>
-            <version>${allure.version}</version>
         </dependency>
 
         <!-- Jackson (JSON) -->
@@ -137,6 +125,29 @@
             <artifactId>slf4j-api</artifactId>
             <version>2.0.16</version>
         </dependency>
+
+        <!-- JUnit Platform Engine for Cucumber -->
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite-api</artifactId>
+            <version>1.9.3</version>
+        </dependency>
+
+        <!-- JUnit Jupiter API for assertions -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.9.3</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JUnit 4 for assertions -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -159,12 +170,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.surefire.version}</version>
                 <configuration>
-                    <suiteXmlFiles>
-                        <suiteXmlFile>testng.xml</suiteXmlFile>
-                    </suiteXmlFiles>
-                    <systemPropertyVariables>
-                        <cucumber.filter.tags>${cucumber.filter.tags}</cucumber.filter.tags>
-                    </systemPropertyVariables>
+                    <includes>
+                        <include>**/TestRunner.java</include>
+                    </includes>
                     <argLine>
                         -Dfile.encoding=UTF-8
                     </argLine>
@@ -177,7 +185,7 @@
                 <artifactId>allure-maven</artifactId>
                 <version>${allure.maven.version}</version>
                 <configuration>
-                    <reportVersion>${allure.version}</reportVersion>
+                    <reportVersion>${allure.commandline.version}</reportVersion>
                     <resultsDirectory>${project.build.directory}/allure-results</resultsDirectory>
                 </configuration>
             </plugin>

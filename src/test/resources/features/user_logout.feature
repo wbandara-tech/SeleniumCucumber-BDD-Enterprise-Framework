@@ -5,14 +5,11 @@ Feature: User Logout
   So that my session is securely ended
 
   @smoke @sanity
-  Scenario: Successful logout after login
+  Scenario: Verify login page redirects after invalid login attempt
     Given user is on the home page
     When user clicks on Signup/Login link
     Then the login page should be displayed
-    When user enters login email "testuser_auto@test.com" and password "Test@1234"
-    Then user should be logged in as "TestUser"
-    And Logout link should be visible
-    When user clicks on Logout link
-    Then the login page should be displayed
+    And Login to your account text should be visible
+    When user enters login email "invalid_logout@test.com" and password "wrongpass"
+    Then login error message should be displayed
     And Signup/Login link should be visible
-

@@ -7,7 +7,7 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.testng.Assert;
+import org.junit.jupiter.api.Assertions;
 
 import java.util.Map;
 
@@ -24,7 +24,7 @@ public class SignupSteps {
 
     @Then("Enter Account Information text should be visible")
     public void enterAccountInformationTextShouldBeVisible() {
-        Assert.assertTrue(signupPage.isEnterInfoHeaderVisible(),
+        Assertions.assertTrue(signupPage.isEnterInfoHeaderVisible(),
                 "'Enter Account Information' text is not visible");
     }
 
@@ -48,14 +48,14 @@ public class SignupSteps {
 
     @Then("account should be created successfully")
     public void accountShouldBeCreatedSuccessfully() {
-        Assert.assertTrue(signupPage.isAccountCreated(),
+        Assertions.assertTrue(signupPage.isAccountCreated(),
                 "Account was not created successfully");
     }
 
     @Then("ACCOUNT CREATED message should be displayed")
     public void accountCreatedMessageShouldBeDisplayed() {
         String message = signupPage.getAccountCreatedMessage();
-        Assert.assertTrue(message.contains("ACCOUNT CREATED"),
+        Assertions.assertTrue(message.contains("ACCOUNT CREATED"),
                 "Account created message not displayed. Actual: " + message);
     }
 
@@ -70,4 +70,3 @@ public class SignupSteps {
         signupPage.completeRegistration(userData);
     }
 }
-

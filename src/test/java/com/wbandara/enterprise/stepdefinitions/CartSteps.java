@@ -6,7 +6,7 @@ import com.wbandara.enterprise.utils.LoggerUtils;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.testng.Assert;
+import org.junit.jupiter.api.Assertions;
 
 import java.util.List;
 
@@ -23,19 +23,19 @@ public class CartSteps {
 
     @Then("the cart page should be displayed")
     public void theCartPageShouldBeDisplayed() {
-        Assert.assertTrue(cartPage.isCartPageLoaded(), "Cart page is not loaded");
+        Assertions.assertTrue(cartPage.isCartPageLoaded(), "Cart page is not loaded");
     }
 
-    @Then("cart should contain {int} item(s)")
+    @Then("cart should contain {int} item\\(s)")
     public void cartShouldContainItems(int expectedCount) {
         int actualCount = cartPage.getCartItemCount();
-        Assert.assertEquals(actualCount, expectedCount,
+        Assertions.assertEquals(actualCount, expectedCount,
                 "Cart item count mismatch. Expected: " + expectedCount + ", Actual: " + actualCount);
     }
 
     @Then("product {string} should be in the cart")
     public void productShouldBeInTheCart(String productName) {
-        Assert.assertTrue(cartPage.isProductInCart(productName),
+        Assertions.assertTrue(cartPage.isProductInCart(productName),
                 "Product '" + productName + "' is not in the cart");
     }
 
@@ -45,7 +45,7 @@ public class CartSteps {
         for (String expectedName : expectedNames) {
             boolean found = actualNames.stream()
                     .anyMatch(name -> name.equalsIgnoreCase(expectedName));
-            Assert.assertTrue(found, "Product '" + expectedName + "' not found in cart. Actual: " + actualNames);
+            Assertions.assertTrue(found, "Product '" + expectedName + "' not found in cart. Actual: " + actualNames);
         }
     }
 
@@ -65,13 +65,13 @@ public class CartSteps {
     public void productShouldNotBeInTheCart(String productName) {
         // Small wait for DOM update after removal
         try { Thread.sleep(1000); } catch (InterruptedException ignored) {}
-        Assert.assertFalse(cartPage.isProductInCart(productName),
+        Assertions.assertFalse(cartPage.isProductInCart(productName),
                 "Product '" + productName + "' is still in the cart");
     }
 
     @Then("the cart should be empty")
     public void theCartShouldBeEmpty() {
-        Assert.assertTrue(cartPage.isCartEmpty(), "Cart is not empty");
+        Assertions.assertTrue(cartPage.isCartEmpty(), "Cart is not empty");
     }
 
     @When("user clicks Proceed to Checkout")
@@ -87,15 +87,15 @@ public class CartSteps {
     @Then("cart product prices should be displayed")
     public void cartProductPricesShouldBeDisplayed() {
         List<String> prices = cartPage.getCartProductPrices();
-        Assert.assertFalse(prices.isEmpty(), "No prices displayed in cart");
+        Assertions.assertFalse(prices.isEmpty(), "No prices displayed in cart");
         for (String price : prices) {
-            Assert.assertFalse(price.isEmpty(), "Empty price found in cart");
+            Assertions.assertFalse(price.isEmpty(), "Empty price found in cart");
         }
     }
 
     @And("cart should not be empty")
     public void cartShouldNotBeEmpty() {
-        Assert.assertFalse(cartPage.isCartEmpty(), "Cart is empty");
+        Assertions.assertFalse(cartPage.isCartEmpty(), "Cart is empty");
     }
 }
 

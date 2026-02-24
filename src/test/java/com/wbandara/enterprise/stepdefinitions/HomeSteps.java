@@ -6,7 +6,8 @@ import com.wbandara.enterprise.utils.LoggerUtils;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.testng.Assert;
+
+import static org.junit.Assert.*;
 
 /**
  * Step definitions for Home Page scenarios.
@@ -17,37 +18,38 @@ public class HomeSteps {
 
     public HomeSteps() {
         this.homePage = new HomePage(DriverManager.getDriver());
+        // Remove setHeadless(false) as it's not defined
     }
 
     @Given("user is on the home page")
     public void userIsOnTheHomePage() {
         LoggerUtils.info(HomeSteps.class, "Verifying user is on the home page");
-        Assert.assertTrue(homePage.isHomePageLoaded(), "Home page is not loaded");
+        assertTrue("Home page is not loaded", homePage.isHomePageLoaded());
     }
 
     @Then("the home page should be displayed successfully")
     public void theHomePageShouldBeDisplayedSuccessfully() {
-        Assert.assertTrue(homePage.isHomePageLoaded(), "Home page is not displayed");
+        assertTrue("Home page is not displayed", homePage.isHomePageLoaded());
     }
 
     @Then("the navbar should be visible with all elements")
     public void theNavbarShouldBeVisibleWithAllElements() {
-        Assert.assertTrue(homePage.isNavbarComplete(), "Navbar elements are not complete");
+        assertTrue("Navbar elements are not complete", homePage.isNavbarComplete());
     }
 
     @Then("the featured items section should be visible")
     public void theFeaturedItemsSectionShouldBeVisible() {
-        Assert.assertTrue(homePage.isFeaturedItemsSectionVisible(), "Featured items section is not visible");
+        assertTrue("Featured items section is not visible", homePage.isFeaturedItemsSectionVisible());
     }
 
     @Then("the category sidebar should be visible")
     public void theCategorySidebarShouldBeVisible() {
-        Assert.assertTrue(homePage.isCategorySidebarVisible(), "Category sidebar is not visible");
+        assertTrue("Category sidebar is not visible", homePage.isCategorySidebarVisible());
     }
 
     @Then("the footer should be visible")
     public void theFooterShouldBeVisible() {
-        Assert.assertTrue(homePage.isFooterVisible(), "Footer is not visible");
+        assertTrue("Footer is not visible", homePage.isFooterVisible());
     }
 
     @When("user clicks on Signup\\/Login link")
@@ -72,18 +74,18 @@ public class HomeSteps {
 
     @Then("user should be logged in as {string}")
     public void userShouldBeLoggedInAs(String username) {
-        Assert.assertTrue(homePage.isUserLoggedIn(), "User is not logged in");
-        Assert.assertEquals(homePage.getLoggedInUsername(), username, "Logged in username mismatch");
+        assertTrue("User is not logged in", homePage.isUserLoggedIn());
+        assertEquals("Logged in username mismatch", username, homePage.getLoggedInUsername());
     }
 
     @Then("Logout link should be visible")
     public void logoutLinkShouldBeVisible() {
-        Assert.assertTrue(homePage.isLogoutLinkVisible(), "Logout link is not visible");
+        assertTrue("Logout link is not visible", homePage.isLogoutLinkVisible());
     }
 
     @Then("Signup\\/Login link should be visible")
     public void signupLoginLinkShouldBeVisible() {
-        Assert.assertTrue(homePage.isSignupLoginLinkVisible(), "Signup/Login link is not visible");
+        assertTrue("Signup/Login link is not visible", homePage.isSignupLoginLinkVisible());
     }
 
     @When("user adds product {int} to cart from home page")
@@ -104,7 +106,6 @@ public class HomeSteps {
     @Then("the home page should have featured products")
     public void theHomePageShouldHaveFeaturedProducts() {
         int count = homePage.getFeaturedProductCount();
-        Assert.assertTrue(count > 0, "No featured products found on home page");
+        assertTrue("No featured products found on home page", count > 0);
     }
 }
-

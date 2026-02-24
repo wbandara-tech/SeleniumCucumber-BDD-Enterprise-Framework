@@ -27,7 +27,12 @@ public abstract class BasePage {
     @Step("Click on element: {locator}")
     protected void click(By locator) {
         LoggerUtils.debug(BasePage.class, "Clicking element: " + locator);
-        WaitUtils.waitForClickable(driver, locator).click();
+        try {
+            WaitUtils.waitForClickable(driver, locator).click();
+        } catch (ElementClickInterceptedException e) {
+            LoggerUtils.warn(BasePage.class, "Click intercepted, using JS click for: " + locator);
+            jsClick(locator);
+        }
     }
 
     @Step("Type '{text}' into element: {locator}")
@@ -112,7 +117,12 @@ public abstract class BasePage {
     }
 
     protected List<WebElement> findElements(By locator) {
-        return WaitUtils.waitForAllVisible(driver, locator);
+        try {
+            return WaitUtils.waitForAllVisible(driver, locator);
+        } catch (Exception e) {
+            LoggerUtils.debug(BasePage.class, "No elements found for: " + locator);
+            return driver.findElements(locator);
+        }
     }
 
     // ======================== JavaScript & Scrolling ========================

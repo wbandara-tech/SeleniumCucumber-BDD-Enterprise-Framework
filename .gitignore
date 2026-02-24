@@ -27,6 +27,7 @@ screenshots/
 # Allure
 allure-results/
 allure-report/
+.allure/
 
 # OS files
 .DS_Store
@@ -41,3 +42,4 @@ desktop.ini
 test-output/
 surefire-reports/
 
+full_test_output.txt 

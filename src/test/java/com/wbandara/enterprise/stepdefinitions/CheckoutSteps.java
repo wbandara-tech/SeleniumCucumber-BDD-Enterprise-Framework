@@ -7,7 +7,7 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.testng.Assert;
+import org.junit.jupiter.api.Assertions;
 
 import java.util.Map;
 
@@ -24,22 +24,22 @@ public class CheckoutSteps {
 
     @Then("the checkout page should be displayed")
     public void theCheckoutPageShouldBeDisplayed() {
-        Assert.assertTrue(checkoutPage.isCheckoutPageLoaded(), "Checkout page is not loaded");
+        Assertions.assertTrue(checkoutPage.isCheckoutPageLoaded(), "Checkout page is not loaded");
     }
 
     @Then("delivery address should be displayed")
     public void deliveryAddressShouldBeDisplayed() {
-        Assert.assertTrue(checkoutPage.isDeliveryAddressDisplayed(), "Delivery address is not displayed");
+        Assertions.assertTrue(checkoutPage.isDeliveryAddressDisplayed(), "Delivery address is not displayed");
     }
 
     @Then("billing address should be displayed")
     public void billingAddressShouldBeDisplayed() {
-        Assert.assertTrue(checkoutPage.isBillingAddressDisplayed(), "Billing address is not displayed");
+        Assertions.assertTrue(checkoutPage.isBillingAddressDisplayed(), "Billing address is not displayed");
     }
 
     @Then("delivery address should contain {string}")
     public void deliveryAddressShouldContain(String expectedText) {
-        Assert.assertTrue(checkoutPage.verifyAddressContains(expectedText),
+        Assertions.assertTrue(checkoutPage.verifyAddressContains(expectedText),
                 "Delivery address does not contain: " + expectedText);
     }
 
@@ -79,15 +79,15 @@ public class CheckoutSteps {
 
     @Then("order should be placed successfully")
     public void orderShouldBePlacedSuccessfully() {
-        Assert.assertTrue(checkoutPage.isOrderPlacedSuccessfully(),
+        Assertions.assertTrue(checkoutPage.isOrderPlacedSuccessfully(),
                 "Order was not placed successfully");
     }
 
     @Then("order confirmation message should be displayed")
     public void orderConfirmationMessageShouldBeDisplayed() {
         String message = checkoutPage.getOrderConfirmationMessage();
-        Assert.assertNotNull(message, "Order confirmation message is null");
-        Assert.assertFalse(message.isEmpty(), "Order confirmation message is empty");
+        Assertions.assertNotNull(message, "Order confirmation message is null");
+        Assertions.assertFalse(message.isEmpty(), "Order confirmation message is empty");
     }
 
     @And("user clicks Continue after order")
@@ -98,8 +98,7 @@ public class CheckoutSteps {
     @Then("checkout should have {int} item(s)")
     public void checkoutShouldHaveItems(int expectedCount) {
         int actualCount = checkoutPage.getCheckoutItemCount();
-        Assert.assertTrue(actualCount >= expectedCount,
+        Assertions.assertTrue(actualCount >= expectedCount,
                 "Checkout items mismatch. Expected at least: " + expectedCount + ", Actual: " + actualCount);
     }
 }
-
